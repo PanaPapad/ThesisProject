@@ -1,0 +1,16 @@
+<Settings>
+  <CaptureSettings>
+    <!-- Interval in minutes -->
+    <captureInterval>5</captureInterval>
+    <!-- Interface to capture on -->
+    <captureInterface>Wi-Fi</captureInterface>
+    <!-- Directory to store the pcap files. Use relative path(from this directory) -->
+    <captureOutDir>..\StoredPcapFiles</captureOutDir>
+    <!-- Name of the scheduled task -->
+    <captureTaskName>PcapCapture</captureTaskName>
+  </CaptureSettings>
+  <CiCFlowmeterSettings>
+    <!-- Path to the executable -->
+    <flowmeterPath>C:\Users\Panagiotis\OneDrive\Uni\ADE\CiCFlowmeter_Compiled\bin\cfm.bat</flowmeterPath>
+  </CiCFlowmeterSettings>
+</Settings>
