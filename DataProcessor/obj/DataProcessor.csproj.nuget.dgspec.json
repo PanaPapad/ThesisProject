@@ -39,6 +39,20 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.5, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "RabbitMQ": {
+              "target": "Package",
+              "version": "[3.6.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
