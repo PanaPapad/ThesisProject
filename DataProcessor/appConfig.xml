@@ -1,0 +1,6 @@
+<DatabaseSettings>
+    <DatabaseName>ids_storage</DatabaseName>
+    <DatabaseServer>localhost</DatabaseServer>
+    <DatabaseUser>root</DatabaseUser>
+    <DatabasePassword></DatabasePassword>
+</DatabaseSettings>

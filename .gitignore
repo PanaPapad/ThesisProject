@@ -1,1 +1,4 @@
 .vscode/*
+DataProcessor/.vscode/*
+DataProcessor/obj/*
+DataProcessor/bin/*
