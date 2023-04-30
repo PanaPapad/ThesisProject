@@ -1,0 +1,9 @@
+{
+    "DatabaseName": "ids_storage",
+
+    "DatabaseServer": "localhost",
+
+    "DatabaseUsername": "root",
+    
+    "DtabasePassword": ""
+}
