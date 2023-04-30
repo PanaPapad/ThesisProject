@@ -13,6 +13,9 @@ public class IdsDbContext : DbContext{
         ResultsData = Set<ResultsData>();
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
+        //This code enables lazy loading and retrying on failure in our database connection. 
+        //Lazy loading allows us to only load data when it is needed, 
+        //and retrying on failure allows us to retry a connection to the database if it fails.
         optionsBuilder
             .UseLazyLoadingProxies()
             .UseMySql(_connectionString, new MySqlServerVersion(new Version(10,4,27)), options => options.EnableRetryOnFailure());
