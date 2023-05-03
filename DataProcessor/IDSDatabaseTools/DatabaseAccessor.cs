@@ -1,6 +1,4 @@
 //This class will be used to connect to the IDS db.
-using Microsoft.EntityFrameworkCore;
-
 public class DatabaseAccessor{
     private IdsDbContext _connectionContext;
 
@@ -25,5 +23,10 @@ public class DatabaseAccessor{
     
     public RawData? GetRawDataWithId(long id){
         return _connectionContext.RawData.Find(id);
+    }
+
+    public bool TestConnection()
+    {
+        return _connectionContext.Database.CanConnect();
     }
 }
