@@ -82,7 +82,8 @@ The script used to create the database is provided in the repository.
 
     # Data processing module
     - .NET Core Runtime 3.1 or later.
-    - RabbitMQ Server 3.8.3 or later.
+    - Erlang 25.3
+    - RabbitMQ Server 3.11.13.
 
     # IDS
     - Python 3.7 or later.
@@ -92,4 +93,4 @@ The script used to create the database is provided in the repository.
     - Web server (Apache, Nginx, etc.)
 
     # Database
-    - MySQL Server 8.0 or later.
+    - MariaDB 10.4 or later.

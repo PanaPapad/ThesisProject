@@ -1,9 +1,14 @@
 {
-    "DatabaseName": "ids_storage",
-
-    "DatabaseServer": "localhost",
-
-    "DatabaseUsername": "root",
-    
-    "DtabasePassword": ""
+    "DatabaseSettings": {
+        "DatabaseName": "ids_storage",
+        "DatabaseServer": "localhost",
+        "DatabaseUsername": "root",
+        "DtabasePassword": ""
+    },
+    "RabbitMQSettings":{
+        "RabbitMQHost": "localhost",
+        "RabbitMQUsername": "ids_processor",
+        "RabbitMQPassword": "idsPassword",
+        "RabbitMQDefinitionsFilePath": "QueueModels/queueDefinitions.json"
+    }
 }
