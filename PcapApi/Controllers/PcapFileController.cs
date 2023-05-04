@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using static SharedHelpers.HelperFunctions;
+using IDSDatabaseTools;
 
 
 namespace PcapApi.Controllers
@@ -8,6 +8,12 @@ namespace PcapApi.Controllers
     [ApiController]
     public class PcapFileController : ControllerBase
     {
+        private readonly DatabaseAccessor _databaseAccessor;
+
+        public PcapFileController(DatabaseAccessor databaseAccessor)
+        {
+            _databaseAccessor = databaseAccessor;
+        }
         [HttpPost]
         public IActionResult UploadPcapFile(IFormFile file)
         {
@@ -15,28 +21,9 @@ namespace PcapApi.Controllers
             {
                 return BadRequest("Invalid file");
             }
-
-            //Connect to DB
-            //Get project directory
-            var projectDirectory = Directory.GetCurrentDirectory();
-            //Build the configuration object
-            var config = new ConfigurationBuilder()
-            .AddJsonFile(projectDirectory + "\\appConfig.json", optional: false, reloadOnChange: true)
-            .Build();
-            //Get db server name, db name, username and password from appsettings.json
-            var dbSettings = config.GetSection("DatabaseSettings");
-            var databaseAccessor = GetDatabaseAccessor(
-                GetNonNullValue(dbSettings["DatabaseServer"]).ToString(),
-                GetNonNullValue(dbSettings["DatabaseName"]).ToString(),
-                GetNonNullValue(dbSettings["DatabaseUsername"]).ToString(),
-                GetNonNullValue(dbSettings["DatabasePassword"]).ToString()
-            );
-            //Test if the connection is valid
-            if (!databaseAccessor.TestConnection())
-            {
-                return StatusCode(500, "Could not connect to database. Please check the connection string in appsettings.json");
-            }
-            return Ok("File uploaded and saved");
+            if(!_databaseAccessor.TestConnection()){
+                return BadRequest("Could not connect to DB");}           
+            return Ok("Connected to DB");
         }
     }
 }

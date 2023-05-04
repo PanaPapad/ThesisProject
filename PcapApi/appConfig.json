@@ -1,0 +1,15 @@
+{
+    "DatabaseSettings": {
+        "DatabaseName": "ids_storage",
+        "DatabaseServer": "localhost",
+        "DatabaseUsername": "pcapApi",
+        "DatabasePassword": "MyPassword",
+        "ConnectionString": "Server=localhost;Database=ids_storage;Uid=pcapApi;Pwd=MyPassword;"
+    },
+    "RabbitMQSettings":{
+        "RabbitMQHost": "localhost",
+        "RabbitMQUsername": "ids_processor",
+        "RabbitMQPassword": "idsPassword",
+        "RabbitMQDefinitionsFilePath": "QueueModels/queueDefinitions.json"
+    }
+}

@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataProcessor", "DataProcessor\DataProcessor.csproj", "{637B2DB4-FB1E-4427-B93E-1EE414215E21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PcapApi", "PcapApi\PcapApi.csproj", "{EFAF7106-74AA-4757-A6EC-DADCAE2BBA7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedHelpers", "SharedHelpers\SharedHelpers.csproj", "{509ADEA7-29E0-4565-817A-21496CEF2809}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{637B2DB4-FB1E-4427-B93E-1EE414215E21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{637B2DB4-FB1E-4427-B93E-1EE414215E21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{637B2DB4-FB1E-4427-B93E-1EE414215E21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{637B2DB4-FB1E-4427-B93E-1EE414215E21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFAF7106-74AA-4757-A6EC-DADCAE2BBA7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFAF7106-74AA-4757-A6EC-DADCAE2BBA7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFAF7106-74AA-4757-A6EC-DADCAE2BBA7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFAF7106-74AA-4757-A6EC-DADCAE2BBA7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{509ADEA7-29E0-4565-817A-21496CEF2809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{509ADEA7-29E0-4565-817A-21496CEF2809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{509ADEA7-29E0-4565-817A-21496CEF2809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{509ADEA7-29E0-4565-817A-21496CEF2809}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

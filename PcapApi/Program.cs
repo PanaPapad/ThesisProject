@@ -1,9 +1,17 @@
+using IDSDatabaseTools;
+using SharedHelpers;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var projectDirectory = Directory.GetCurrentDirectory();
+var config = new ConfigurationBuilder()
+.AddJsonFile(projectDirectory + "\\appConfig.json", optional: false, reloadOnChange: true)
+.Build();
+var dbSettings = config.GetSection("DatabaseSettings");
+string conn = HelperFunctions.GetNonNullValue(dbSettings["ConnectionString"]);
+builder.Services.AddScoped(x => new DatabaseAccessor(conn));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
