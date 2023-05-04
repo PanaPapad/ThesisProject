@@ -8,7 +8,7 @@ This project is directed towards network administrators that want to monitor the
 The project is composed of 5 main components:
 - A data collection script that utilizes tshark to capture network traffic from a BACnet IP network.
 - A Database that stores the data in all of its stages.
-- CiCFlowMeter, a tool that extracts features from the network traffic. This tool was developed the following team of researchers:
+- CiCFlowMeter, a tool that extracts features from the network traffic. This tool was developed by the following team of researchers:
     Arash Habibi Lashkari: Researcher and Developer (Founder)
     Gerard Drapper: Researcher and Developer (Co-funder)
     muhammad saiful islam: Researcher and Developer (Co-funder)
@@ -62,7 +62,7 @@ The web app was developed by researchers at the Network Lab of the University of
 !REMEMBER TO ADD CITATION!
 
 # Database
-The database used is MySQL.
+The database used is MariaDB.
 The database is used to store the data in all of its stages.
 The database is also used to store the results of the IDS.
 The data is stored as Blobs in the database.

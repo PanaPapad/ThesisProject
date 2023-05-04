@@ -1,4 +1,6 @@
 //This class will be used to connect to the IDS db.
+using DataModels;
+namespace IDSDatabaseTools;
 public class DatabaseAccessor{
     private IdsDbContext _connectionContext;
 

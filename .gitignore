@@ -2,3 +2,9 @@
 DataProcessor/.vscode/*
 DataProcessor/obj/*
 DataProcessor/bin/*
+SharedHelpers/bin/*
+SharedHelpers/obj/*
+PcapApi/bin/*
+PcapApi/obj/*
+PcapApi/Properties/*
+PcapApi/appsettings.Development.json

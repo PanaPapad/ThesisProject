@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Proxies;
-
+using DataModels;
+namespace IDSDatabaseTools;
 public class IdsDbContext : DbContext{
     private readonly string _connectionString;
     public DbSet<RawData> RawData { get; set; }

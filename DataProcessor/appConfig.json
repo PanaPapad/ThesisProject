@@ -3,7 +3,7 @@
         "DatabaseName": "ids_storage",
         "DatabaseServer": "localhost",
         "DatabaseUsername": "root",
-        "DtabasePassword": ""
+        "DatabasePassword": ""
     },
     "RabbitMQSettings":{
         "RabbitMQHost": "localhost",

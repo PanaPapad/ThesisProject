@@ -1,6 +1,5 @@
-
 using System.ComponentModel.DataAnnotations.Schema;
-
+namespace DataModels;
 [Table("processed_data")]
 public class ProcessedData{
     [Column("id")]
