@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using IDSDatabaseTools;
-
+using DataModels;
 
 namespace PcapApi.Controllers
 {
@@ -15,15 +15,25 @@ namespace PcapApi.Controllers
             _databaseAccessor = databaseAccessor;
         }
         [HttpPost]
-        public IActionResult UploadPcapFile(IFormFile file)
+        public async Task<IActionResult> UploadPcapFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
                 return BadRequest("Invalid file");
             }
-            if(!_databaseAccessor.TestConnection()){
-                return BadRequest("Could not connect to DB");}           
-            return Ok("Connected to DB");
+            if (!_databaseAccessor.TestConnection())
+            {
+                return BadRequest("Could not connect to DB");
+            }
+            //Use database accessor to save file in a new raw data record
+            byte[] fileBytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                fileBytes = memoryStream.ToArray();
+            }
+            _databaseAccessor.AddRawData(new RawData(fileBytes));
+            return Ok("File uploaded successfully");
         }
     }
 }
