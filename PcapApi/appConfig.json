@@ -10,6 +10,12 @@
         "RabbitMQHost": "localhost",
         "RabbitMQUsername": "ids_processor",
         "RabbitMQPassword": "idsPassword",
+        "RabbitMQPort": 5672,
         "RabbitMQDefinitionsFilePath": "QueueModels/queueDefinitions.json"
+    },
+    "ControllerQueueMappings":{
+        "RawDataSuccessQueue": "rawDataQueue",
+        "RawDataFailedQueue": "failedRawDataQueue"
     }
+
 }

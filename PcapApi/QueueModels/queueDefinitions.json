@@ -1,0 +1,22 @@
+[
+    {
+        "id": "rawDataQueue",
+        "name": "rawDataQueue",
+        "durable": true,
+        "autoDelete": false,
+        "exclusive": false,
+        "arguments":{
+            "x-message-ttl": 60000
+        }
+    },
+    {
+        "id": "failedRawDataQueue",
+        "name": "failedRawDataQueue",
+        "durable": true,
+        "autoDelete": false,
+        "exclusive": false,
+        "arguments":{
+            "x-message-ttl": 60000
+        }
+    }
+]

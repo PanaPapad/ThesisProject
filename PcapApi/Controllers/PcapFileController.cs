@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using IDSDatabaseTools;
 using DataModels;
+using SharedHelpers.QueueTools;
 
 namespace PcapApi.Controllers
 {
@@ -9,10 +10,16 @@ namespace PcapApi.Controllers
     public class PcapFileController : ControllerBase
     {
         private readonly DatabaseAccessor _databaseAccessor;
+        private readonly QueueMessagerService _queueMessagerService;
+        private readonly string successQueueId;
+        private readonly string failureQueueId;
 
-        public PcapFileController(DatabaseAccessor databaseAccessor)
+        public PcapFileController(DatabaseAccessor databaseAccessor, QueueMessagerService queueMessagerService, QueueMappings queueMappings)
         {
+            successQueueId = queueMappings.GetQueueId("RawDataSuccessQueue");
+            failureQueueId = queueMappings.GetQueueId("RawDataFailedQueue");
             _databaseAccessor = databaseAccessor;
+            _queueMessagerService = queueMessagerService;
         }
         [HttpPost]
         public async Task<IActionResult> UploadPcapFile(IFormFile file)
@@ -32,7 +39,12 @@ namespace PcapApi.Controllers
                 await file.CopyToAsync(memoryStream);
                 fileBytes = memoryStream.ToArray();
             }
-            _databaseAccessor.AddRawData(new RawData(fileBytes));
+            long id = _databaseAccessor.AddRawData(new RawData(fileBytes));
+            //send message to success queue
+            //Get the raw data id from the database
+
+            _queueMessagerService.SendMessage(id.ToString(),successQueueId);
+
             return Ok("File uploaded successfully");
         }
     }

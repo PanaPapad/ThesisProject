@@ -1,6 +1,7 @@
 {
     "queueList":[
         {
+            "id":"rawDataQueue",
             "name":"rawDataQueue",
             "durable":true,
             "autoDelete":false,
@@ -10,6 +11,7 @@
             }
         },
         {
+            "id":"failedRawDataQueue",
             "name":"failedRawDataQueue",
             "durable":true,
             "autoDelete":false,
@@ -19,6 +21,7 @@
             }
         },
         {
+            "id":"processedDataQueue",
             "name":"processedDataQueue",
             "durable":true,
             "autoDelete":false,
@@ -28,6 +31,7 @@
             }
         },
         {
+            "id":"failedProcessedDataQueue",
             "name":"failedProcessedDataQueue",
             "durable":true,
             "autoDelete":false,
@@ -37,6 +41,7 @@
             }
         },
         {
+            "id":"resultsDataQueue",
             "name":"resultsDataQueue",
             "durable":true,
             "autoDelete":false,
@@ -46,6 +51,7 @@
             }
         },
         {
+            "id":"failedResultsDataQueue",
             "name":"failedResultsDataQueue",
             "durable":true,
             "autoDelete":false,

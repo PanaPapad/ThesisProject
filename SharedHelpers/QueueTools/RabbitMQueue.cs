@@ -11,15 +11,17 @@ public class RabbitMQueue{
     private bool _isExclusive;
     [JsonProperty("autoDelete")]
     private bool _isAutoDelete;
-    [JsonIgnore]
-    private bool isDecalred = false;
+    [JsonProperty("arguments")]
+    private Dictionary<string, object> _arguments;
 
-    public RabbitMQueue(string queueId, string queueName, bool isDurable = false, bool isExclusive = false, bool isAutoDelete = false){
-        _queueId = queueId;
-        _queueName = queueName;
-        _isDurable = isDurable;
-        _isExclusive = isExclusive;
-        _isAutoDelete = isAutoDelete;
+    [JsonConstructor]
+    public RabbitMQueue(string id, string name, bool durable = false, bool autoDelete = false, bool exclusive = false){
+        _queueId = id;
+        _queueName = name;
+        _isDurable = durable;
+        _isExclusive = exclusive;
+        _isAutoDelete = autoDelete;
+        _arguments = new Dictionary<string, object>();
     }
 
     public string GetQueueId(){
@@ -30,20 +32,12 @@ public class RabbitMQueue{
         return _queueName;
     }
 
-    public void SetDeclared(){
-        isDecalred = true;
-    }
-
     public void Declare(IModel channel){
-        if(!isDecalred){
-            channel.QueueDeclare(
-                queue: _queueId,
-                durable: _isDurable,
-                exclusive: _isExclusive,
-                autoDelete: _isAutoDelete,
-                arguments: null
-            );
-            isDecalred = true;
-        }
+        channel.QueueDeclare(queue: _queueName,
+                             durable: _isDurable,
+                             exclusive: _isExclusive,
+                             autoDelete: _isAutoDelete,
+                             arguments: _arguments
+                             );
     }
 }

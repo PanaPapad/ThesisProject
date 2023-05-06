@@ -1,4 +1,4 @@
-using System.Text.Json;
+using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 
@@ -50,7 +50,7 @@ public class RabbitMQSettings
 
     public void AddQueuesFromJson(string json)
     {
-        var queues = JsonSerializer.Deserialize<List<RabbitMQueue>>(json);
+        var queues = JsonConvert.DeserializeObject<List<RabbitMQueue>>(json);
         //Check if queues is null
         if(queues != null){
             Queues.AddRange(queues);
