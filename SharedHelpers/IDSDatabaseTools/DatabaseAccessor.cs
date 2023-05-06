@@ -8,9 +8,10 @@ public class DatabaseAccessor{
         _connectionContext = new IdsDbContext(connectionString);
     }
 
-    public void AddRawData(RawData rawData){
-        _connectionContext.Add(rawData);
+    public long AddRawData(RawData rawData){
+        _connectionContext.RawData.Add(rawData);
         _connectionContext.SaveChanges();
+        return rawData.Id;
     }
 
     public void AddProcessedData(ProcessedData processedData){
