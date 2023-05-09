@@ -39,6 +39,7 @@ namespace PcapApi.Controllers
                 await file.CopyToAsync(memoryStream);
                 fileBytes = memoryStream.ToArray();
             }
+            try{
             long id = _databaseAccessor.AddRawData(new RawData(fileBytes));
             //send message to success queue
             //Get the raw data id from the database
@@ -46,6 +47,12 @@ namespace PcapApi.Controllers
             _queueMessagerService.SendMessage(id.ToString(),successQueueId);
 
             return Ok("File uploaded successfully");
+            }
+            catch(Exception e){
+                //send message to failure queue
+                _queueMessagerService.SendMessage(e.Message,failureQueueId);
+                return BadRequest("File upload failed. Message sent to failure queue");
+            }
         }
     }
 }
