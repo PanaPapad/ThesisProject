@@ -1,5 +1,12 @@
 using RabbitMQ.Client;
 using Newtonsoft.Json;
+
+/**
+    <summary>
+        This class represents a RabbitMQ queue. It can be used to declare a queue on a given channel.
+        Objects from this class can be deserialized from a json string using the Newtonsoft Json package.
+    </summary>
+*/
 public class RabbitMQueue{
     [JsonProperty("id")]
     private string _queueId;

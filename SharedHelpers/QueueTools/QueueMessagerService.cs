@@ -2,6 +2,11 @@ using System.Text;
 using RabbitMQ.Client;
 
 namespace SharedHelpers.QueueTools;
+/**
+<summary>
+    This class is used to send messages to RabbitMQ queues.
+</summary>
+*/
 public class QueueMessagerService : IDisposable
 {
     private readonly IConnection _connection;
@@ -23,6 +28,11 @@ public class QueueMessagerService : IDisposable
         }
     }
 
+    /**
+    <summary>
+        This method sends a message to the queue with the provided queue id.
+    </summary>
+    */
     public void SendMessage(string message, string queueId){
         if (!_queueNames.TryGetValue(queueId, out var queueName))
         {

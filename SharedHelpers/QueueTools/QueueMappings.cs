@@ -1,6 +1,12 @@
 using Microsoft.Extensions.Configuration;
 
+    /**
+    <summary>
+        This class is used to map queue ids to queue names. This is done to avoid hardcoding
+        queue ids in the code.
+    */
 public class QueueMappings{
+
     private Dictionary<string, string> _queueIds;
     public QueueMappings(IConfigurationSection queueMappings){
         _queueIds = new Dictionary<string, string>();
@@ -10,9 +16,14 @@ public class QueueMappings{
         }
     }
 
+    /**
+    <summary>
+        This method returns the queue id for the provided queue name.
+    </summary>
+    */
     public string GetQueueId(string queueMapping){
         if(!_queueIds.TryGetValue(queueMapping, out var queueId)){
-            throw new ArgumentException($"Queue mapping '{queueMapping}' was not found.");
+            throw new KeyNotFoundException($"Queue mapping '{queueMapping}' was not found.");
         }
         return queueId;
     }
