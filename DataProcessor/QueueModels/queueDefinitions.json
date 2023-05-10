@@ -1,64 +1,62 @@
-{
-    "queueList":[
-        {
-            "id":"rawDataQueue",
-            "name":"rawDataQueue",
-            "durable":true,
-            "autoDelete":false,
-            "exclusive":false,
-            "arguments":{
-                "x-message-ttl":60000
-            }
-        },
-        {
-            "id":"failedRawDataQueue",
-            "name":"failedRawDataQueue",
-            "durable":true,
-            "autoDelete":false,
-            "exclusive":false,
-            "arguments":{
-                "x-message-ttl":60000
-            }
-        },
-        {
-            "id":"processedDataQueue",
-            "name":"processedDataQueue",
-            "durable":true,
-            "autoDelete":false,
-            "exclusive":false,
-            "arguments":{
-                "x-message-ttl":60000
-            }
-        },
-        {
-            "id":"failedProcessedDataQueue",
-            "name":"failedProcessedDataQueue",
-            "durable":true,
-            "autoDelete":false,
-            "exclusive":false,
-            "arguments":{
-                "x-message-ttl":60000
-            }
-        },
-        {
-            "id":"resultsDataQueue",
-            "name":"resultsDataQueue",
-            "durable":true,
-            "autoDelete":false,
-            "exclusive":false,
-            "arguments":{
-                "x-message-ttl":60000
-            }
-        },
-        {
-            "id":"failedResultsDataQueue",
-            "name":"failedResultsDataQueue",
-            "durable":true,
-            "autoDelete":false,
-            "exclusive":false,
-            "arguments":{
-                "x-message-ttl":60000
-            }
+[
+    {
+        "id": "rawDataQueue",
+        "name": "rawDataQueue",
+        "durable": true,
+        "autoDelete": false,
+        "exclusive": false,
+        "arguments": {
+            "x-message-ttl": 3600000
         }
-    ]
-}
+    },
+    {
+        "id": "failedRawDataQueue",
+        "name": "failedRawDataQueue",
+        "durable": true,
+        "autoDelete": false,
+        "exclusive": false,
+        "arguments": {
+            "x-message-ttl": 3600000
+        }
+    },
+    {
+        "id": "processedDataQueue",
+        "name": "processedDataQueue",
+        "durable": true,
+        "autoDelete": false,
+        "exclusive": false,
+        "arguments": {
+            "x-message-ttl": 3600000
+        }
+    },
+    {
+        "id": "failedProcessedDataQueue",
+        "name": "failedProcessedDataQueue",
+        "durable": true,
+        "autoDelete": false,
+        "exclusive": false,
+        "arguments": {
+            "x-message-ttl": 3600000
+        }
+    },
+    {
+        "id": "resultsDataQueue",
+        "name": "resultsDataQueue",
+        "durable": true,
+        "autoDelete": false,
+        "exclusive": false,
+        "arguments": {
+            "x-message-ttl": 3600000
+        }
+    },
+    {
+        "id": "failedResultsDataQueue",
+        "name": "failedResultsDataQueue",
+        "durable": true,
+        "autoDelete": false,
+        "exclusive": false,
+        "arguments": {
+            "x-message-ttl": 3600000
+        }
+    }
+]

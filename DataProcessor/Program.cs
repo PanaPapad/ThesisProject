@@ -3,6 +3,9 @@ using RabbitMQ.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static SharedHelpers.HelperFunctions;
+using SharedHelpers.QueueTools;
+using RabbitMQ.Client.Exceptions;
+
 namespace DataProcessor;
 public class Program
 {
@@ -33,24 +36,17 @@ public class Program
             ExitWithMessage("Could not connect to database. Please check the connection string in appsettings.json");
         }
         Console.WriteLine("Connected to database.");
-
-        Console.WriteLine("Connecting to RabbitMQ...");
+        
         //Connect to RabbitMQ
         var RabbitMQSettings = config.GetSection("RabbitMQSettings");
-        var factory = new ConnectionFactory()
-        {
-            HostName = RabbitMQSettings["RabbitMQHost"],
-            UserName = RabbitMQSettings["RabbitMQUsername"],
-            Password = RabbitMQSettings["RabbitMQPassword"],
-        };
-        using (var connection = factory.CreateConnection())
-        using (var channel = connection.CreateModel())
-        {
-            Console.WriteLine("Connected to RabbitMQ.");
-            Console.WriteLine("Declaring queues...");
-            DeclareQueues(RabbitMQSettings, channel);
-            Console.WriteLine("Queues declared.");
+        IModel channel;
+        try{
+            channel = DeclareQueues(RabbitMQSettings);
         }
+        catch(NullReferenceException e){
+            ExitWithMessage("Connecting to Queue service failed with the following error:\n" + e.Message);
+        }
+
 
     }
 
@@ -72,6 +68,7 @@ public class Program
         Failure to read the json file will cause the program to exit
     </summary>
     */
+    [Obsolete] //Replaced by new method
     private static void DeclareQueues(IConfigurationSection RabbitMQSettings, IModel channel)
     {
         //Get the path to the json file containing the queue definitions
@@ -114,6 +111,46 @@ public class Program
         }
     }
     /**
+        <summary>
+            Method to connect and declare queues on the RabbitMQ server. Connection variables and queue
+            definitions are read from the provided configuration section.
+        </summary>
+    */
+    private static IModel DeclareQueues(IConfigurationSection RabbitMQSettings)
+    {
+        Console.WriteLine("Connecting to RabbitMQ...");
+        var rmq = new RabbitMQSettings(RabbitMQSettings);
+        //Check that the queue definitions are valid and more than 0.
+        if (rmq.Queues == null || rmq.Queues.Count == 0)
+        {
+            ExitWithMessage("No queues defined in queueDefinitions.json");
+        }
+        IModel? channel = null;
+        try{
+            var factory = rmq.GetConnectionFactory();
+            channel = factory.CreateModel();
+            Console.WriteLine("Connected to RabbitMQ.");
+            Console.WriteLine("Declaring queues...");       
+            rmq.DeclareQueues(channel, true);
+            Console.WriteLine("Queues declared.");
+        }
+        catch(BrokerUnreachableException e){
+            ExitWithMessage($"Could not connect to RabbitMQ server.\n{e.Message}");
+        }
+        catch(OperationInterruptedException e){
+            ExitWithMessage($"Could not declare queues.\n{e.Message}");
+        }
+        catch(Exception e){
+            ExitWithMessage($"An unknown error occured.\n{e.Message}");
+        }
+        //Check that channel is open.
+        if (channel==null || !channel.IsOpen)
+        {
+            ExitWithMessage("Could not open channel.");
+        }
+        return channel ?? throw new NullReferenceException("Channel is null.");
+    }
+    /**
     <summary>
         Method to check if a json token is null. If the jtoken isn't null then the token
         will be returned as a non-nullable reference. Otherwise an exception will be thrown.
@@ -126,5 +163,5 @@ public class Program
         return (JToken)j; //Ignore warning as check has been done*/
         return GetNonNullValue<JToken>(j);
     }
-    
+
 }
