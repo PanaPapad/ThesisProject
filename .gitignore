@@ -8,3 +8,6 @@ PcapApi/bin/*
 PcapApi/obj/*
 PcapApi/Properties/*
 PcapApi/appsettings.Development.json
+CiCFlowmeter_Compiled/bin/logs/*
+CiCFlowmeter_Compiled/bin/outputData/*
+

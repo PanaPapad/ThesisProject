@@ -14,14 +14,16 @@ public class DatabaseAccessor{
         return rawData.Id;
     }
 
-    public void AddProcessedData(ProcessedData processedData){
+    public long AddProcessedData(ProcessedData processedData){
         _connectionContext.Add(processedData);
         _connectionContext.SaveChanges();
+        return processedData.Id;
     }
 
-    public void AddResultsData(ResultsData resultsData){
+    public long AddResultsData(ResultsData resultsData){
         _connectionContext.Add(resultsData);
         _connectionContext.SaveChanges();
+        return resultsData.Id;
     }
     
     public RawData? GetRawDataWithId(long id){
