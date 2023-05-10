@@ -3,7 +3,9 @@ using Microsoft.Extensions.Configuration;
     /**
     <summary>
         This class is used to map queue ids to queue names. This is done to avoid hardcoding
-        queue ids in the code.
+        queue ids in the code. These mappings are typically stored in a config file in either
+        JSON or XML format.
+    </summary>
     */
 public class QueueMappings{
 
