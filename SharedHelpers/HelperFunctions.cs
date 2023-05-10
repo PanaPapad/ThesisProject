@@ -1,4 +1,5 @@
 using IDSDatabaseTools;
+using Microsoft.Extensions.Configuration;
 
 namespace SharedHelpers;
 /**
@@ -29,5 +30,10 @@ public static class HelperFunctions
     {
         var connectionString = $"Server={DbServer};Database={DbName};uid={DbUsername};Password={DbPassword};";
         return new DatabaseAccessor(connectionString);
+    }
+    public static IConfigurationRoot GetConfigFromJsonFile(string path){
+        return new ConfigurationBuilder()
+        .AddJsonFile(path, optional: false, reloadOnChange: true)
+        .Build();
     }
 }
