@@ -39,7 +39,21 @@ public class RabbitMQueue{
         return _queueName;
     }
 
-    public void Declare(IModel channel){
+    public void Declare(IModel channel, bool Override=false){
+        //Check if queue exists
+        bool queueExists = true;
+        try{
+            channel.QueueDeclarePassive(_queueName);
+            //If no override return
+            if(!Override){return;}
+        }
+        catch(RabbitMQ.Client.Exceptions.OperationInterruptedException){
+            queueExists = false;
+        }
+        //Delete queue if it exists AND override is true
+        if(queueExists){
+            channel.QueueDelete(_queueName);
+        }
         channel.QueueDeclare(queue: _queueName,
                              durable: _isDurable,
                              exclusive: _isExclusive,

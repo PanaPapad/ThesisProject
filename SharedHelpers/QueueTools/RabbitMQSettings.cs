@@ -98,14 +98,15 @@ public class RabbitMQSettings
 
     /**
         <summary>
-        Delcare all queues in the list of queues on the provided channel. 
+        Delcare all queues in the list of queues on the provided channel.
+        Queues can be overriden in case of a change in settings by using the Override parameter.
         </summary>
     */
-    public void DeclareQueues(IModel channel)
+    public void DeclareQueues(IModel channel, bool Override=false)
     {
         foreach (var queue in Queues)
         {
-            queue.Declare(channel);
+            queue.Declare(channel, Override);
         }
     }
 
