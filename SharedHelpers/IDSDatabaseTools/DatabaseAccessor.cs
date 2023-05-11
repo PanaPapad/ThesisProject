@@ -29,6 +29,12 @@ public class DatabaseAccessor{
     public RawData? GetRawDataWithId(long id){
         return _connectionContext.RawData.Find(id);
     }
+    public ProcessedData? GetProcessedDataWithId(long id){
+        return _connectionContext.ProcessedData.Find(id);
+    }
+    public ResultsData? GetResultsDataWithId(long id){
+        return _connectionContext.ResultsData.Find(id);
+    }
 
     public bool TestConnection()
     {
