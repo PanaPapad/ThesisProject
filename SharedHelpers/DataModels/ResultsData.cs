@@ -12,8 +12,9 @@ public class ResultsData{
     public byte[] Data { get; set; }
     public virtual ProcessedData? ProcessedData { get; set; }
 
-    public ResultsData(DateTime insertDate, byte[] data){
+    public ResultsData(DateTime insertDate, byte[] data, long processedDataId){
         InsertDate = insertDate;
+        ProcessedDataId = processedDataId;
         Data = data;
     }
 }
