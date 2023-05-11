@@ -79,4 +79,28 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+var cancellationTokenSource = new CancellationTokenSource();
+
+Console.CancelKeyPress += (sender, e) =>
+{
+    // Handle Ctrl+C or SIGINT gracefully
+    e.Cancel = true;
+    cancellationTokenSource.Cancel();
+};
+
+var applicationTask = app.RunAsync(cancellationTokenSource.Token);
+
+// Wait for the termination command
+Console.WriteLine("Press 'Q' to quit.");
+while (true)
+{
+    var key = Console.ReadKey(intercept: true).Key;
+    if (key == ConsoleKey.Q)
+    {
+        cancellationTokenSource.Cancel();
+        break;
+    }
+}
+
+// Wait for the application to stop
+applicationTask.GetAwaiter().GetResult();
