@@ -44,10 +44,23 @@ catch (RabbitMQ.Client.Exceptions.BrokerUnreachableException e)
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//Increase the file size limit to 10MB
+//Set the file size limit for the form
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 1024 * 1024 * 10;
+    int sizeLimit = 10;
+    try{
+        sizeLimit = Int32.Parse(HelperFunctions.GetNonNullValue(config["RequestSettings:FormSizeLimitInMB"]));
+    }
+    catch (FormatException e)
+    {
+        Console.WriteLine("Could not parse the value for FormSizeLimitInMB in appConfig.json. Please check your configuration and try again.");
+        Console.WriteLine(e.Message);
+        //Wait for user input to exit
+        Console.WriteLine("Press [enter] to exit.");
+        Console.ReadLine();
+        Environment.Exit(1);
+    }
+    options.MultipartBodyLengthLimit = 1024 * 1024 * sizeLimit;
 });
 
 

@@ -16,6 +16,8 @@
     "ControllerQueueMappings":{
         "RawDataSuccessQueue": "rawDataQueue",
         "RawDataFailedQueue": "failedRawDataQueue"
+    },    
+    "RequestSettings": {
+        "FormSizeLimitInMB": 10
     }
-
 }
