@@ -12,8 +12,9 @@ public class ProcessedData{
     public byte[] Data { get; set; }
     public virtual RawData? RawData { get; set; }
     public virtual List<ResultsData> ResultsData { get; set; }
-    public ProcessedData(byte[] data){
+    public ProcessedData(byte[] data, long rawDataId){
         InsertDate = DateTime.Now;
+        RawDataId = rawDataId;
         Data = data;
         ResultsData = new List<ResultsData>();
     }
