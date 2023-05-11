@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using static SharedHelpers.HelperFunctions;
 using SharedHelpers.QueueTools;
 using RabbitMQ.Client.Exceptions;
+using IDSDatabaseTools;
 
 namespace DataProcessor;
 public class Program
@@ -12,42 +13,23 @@ public class Program
     private static void Main(string[] args)
     {
         Console.WriteLine("Starting DataProcessor...");
-        Console.WriteLine("Reading appsettings.json...");
+        Console.WriteLine("Reading Configuration...");
         //Get project directory
         var projectDirectory = Directory.GetCurrentDirectory();
         //Build the configuration object
-        var config = new ConfigurationBuilder()
-        .AddJsonFile(projectDirectory + "\\appConfig.json", optional: false, reloadOnChange: true)
-        .Build();
-        Console.WriteLine("appsettings.json read.");
-
-        Console.WriteLine("Connecting to database...");
-        //Get db server name, db name, username and password from appsettings.json
-        var dbSettings = config.GetSection("DatabaseSettings");
-        var databaseAccessor = GetDatabaseAccessor(
-            GetNonNullValue(dbSettings["DatabaseServer"]).ToString(),
-            GetNonNullValue(dbSettings["DatabaseName"]).ToString(),
-            GetNonNullValue(dbSettings["DatabaseUsername"]).ToString(),
-            GetNonNullValue(dbSettings["DatabasePassword"]).ToString()    
-        );
-        //Test if the connection is valid
-        if (!databaseAccessor.TestConnection())
-        {
-            ExitWithMessage("Could not connect to database. Please check the connection string in appsettings.json");
-        }
-        Console.WriteLine("Connected to database.");
-        
+        var config = GetConfigFromJsonFile(projectDirectory + "\\appConfig.json");
+        Console.WriteLine("Configuration read.");
+        //Connect to the database
+        var dbAccessor = ConnectDB(config.GetSection("DatabaseSettings"));
         //Connect to RabbitMQ
-        var RabbitMQSettings = config.GetSection("RabbitMQSettings");
         IModel channel;
-        try{
-            channel = DeclareQueues(RabbitMQSettings);
-        }
-        catch(NullReferenceException e){
-            ExitWithMessage("Connecting to Queue service failed with the following error:\n" + e.Message);
-        }
-
-
+        RabbitMQSettings rmq;
+        channel = DeclareQueues(config.GetSection("RabbitMQSettings") , out rmq);
+        //Begin consuming messages
+        StartConsumers(channel, config.GetSection("ConsumerSettings"), rmq, dbAccessor);
+        //Wait for user input to exit
+        Console.WriteLine("Press [enter] to exit.");
+        Console.ReadLine();
     }
 
     
@@ -57,6 +39,9 @@ public class Program
     private static void ExitWithMessage(string message)
     {
         Console.WriteLine(message);
+        //Wait for user input to exit
+        Console.WriteLine("Press [enter] to exit.");
+        Console.ReadLine();
         Environment.Exit(1);
     }
     
@@ -116,10 +101,10 @@ public class Program
             definitions are read from the provided configuration section.
         </summary>
     */
-    private static IModel DeclareQueues(IConfigurationSection RabbitMQSettings)
+    private static IModel DeclareQueues(IConfigurationSection RabbitMQSettings, out RabbitMQSettings rmq)
     {
         Console.WriteLine("Connecting to RabbitMQ...");
-        var rmq = new RabbitMQSettings(RabbitMQSettings);
+        rmq = new RabbitMQSettings(RabbitMQSettings);
         //Check that the queue definitions are valid and more than 0.
         if (rmq.Queues == null || rmq.Queues.Count == 0)
         {
@@ -147,8 +132,9 @@ public class Program
         if (channel==null || !channel.IsOpen)
         {
             ExitWithMessage("Could not open channel.");
+            throw new NullReferenceException("Channel is null.");
         }
-        return channel ?? throw new NullReferenceException("Channel is null.");
+        return channel;
     }
     /**
     <summary>
@@ -164,4 +150,44 @@ public class Program
         return GetNonNullValue<JToken>(j);
     }
 
+    private static void StartConsumers(IModel channel, IConfigurationSection config, RabbitMQSettings rmq, DatabaseAccessor dbAccessor){
+        //Create Messager
+        Console.WriteLine("Creating QueueMessagerService...");
+        var qms = new QueueMessagerService(rmq);
+        Console.WriteLine("QueueMessagerService created.");
+        //Raw Data consumer
+        Console.WriteLine("Creating RawDataConsumer...");
+        var consumerConfig = new ConfigurationBuilder().AddConfiguration(config).Build();
+        consumerConfig["nextQueueId"] = config["QueueMappings:ProcessedDataQueueId"];
+        consumerConfig["failedQueueId"] = config["QueueMappings:ProcessedDataQueueFailedId"];
+        consumerConfig["cfmPath"] = config["CiCFlowmeterSettings:FullPath"];
+        consumerConfig["outputDirectory"] = config["CiCFlowmeterSettings:OutputFullPath"];
+        var rawConsumer = new RawDataConsumer(channel, dbAccessor, qms, consumerConfig);
+        //begin consuming from raw data queue
+        channel.BasicConsume(
+            queue: config["QueueMappings:RawDataQueueId"],
+            autoAck: false,
+            consumer: rawConsumer
+        );
+        Console.WriteLine("RawDataConsumer created.");
+    }
+
+    private static DatabaseAccessor ConnectDB(IConfigurationSection dbSettings){
+        Console.WriteLine("Connecting to database...");
+        //Get db server name, db name, username and password from appsettings.json
+        
+        var databaseAccessor = GetDatabaseAccessor(
+            GetNonNullValue(dbSettings["DatabaseServer"]).ToString(),
+            GetNonNullValue(dbSettings["DatabaseName"]).ToString(),
+            GetNonNullValue(dbSettings["DatabaseUsername"]).ToString(),
+            GetNonNullValue(dbSettings["DatabasePassword"]).ToString()    
+        );
+        //Test if the connection is valid
+        if (!databaseAccessor.TestConnection())
+        {
+            ExitWithMessage("Could not connect to database. Please check the connection string in Configuration");
+        }
+        Console.WriteLine("Connected to database.");
+        return databaseAccessor;
+    }
 }

@@ -5,14 +5,25 @@
         "DatabaseUsername": "root",
         "DatabasePassword": ""
     },
-    "RabbitMQSettings":{
+    "RabbitMQSettings": {
         "RabbitMQHost": "localhost",
         "RabbitMQUsername": "ids_processor",
         "RabbitMQPassword": "idsPassword",
         "RabbitMQPort": 5672,
         "RabbitMQDefinitionsFilePath": "QueueModels/queueDefinitions.json"
     },
-    "QueueMappings":{
-        
+    "ConsumerSettings": {
+        "QueueMappings": {
+            "RawDataQueueId": "rawDataQueue",
+            "RawDataQueueFailedId": "failedRawDataQueue",
+            "ProcessedDataQueueId": "processedDataQueue",
+            "ProcessedDataQueueFailedId": "failedProcessedDataQueue",
+            "ResultsDataQueueId": "resultsDataQueue",
+            "ResultsDataQueueFailedId": "failedResultsDataQueue"
+        },
+        "CiCFlowmeterSettings": {
+            "FullPath": "C:/Users/Panagiotis/Documents/Code/ThesisProject/CiCFlowmeter_Compiled/bin/cfm.bat",
+            "OutputFullPath": "C:/Users/Panagiotis/Documents/Code/ThesisProject/CiCFlowmeter_Compiled/bin/outputData/"
+        }
     }
 }

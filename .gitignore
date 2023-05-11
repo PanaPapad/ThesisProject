@@ -10,4 +10,5 @@ PcapApi/Properties/*
 PcapApi/appsettings.Development.json
 CiCFlowmeter_Compiled/bin/logs/*
 CiCFlowmeter_Compiled/bin/outputData/*
-
+CiCFlowmeter_Compiled/logs/*
+DataProcessor/logs/*
