@@ -42,7 +42,7 @@ public class RawDataConsumer : EventingBasicConsumer
     {
         long rawDataId = long.Parse(message);
         // Get the pcap file from the database using the id in the message
-        var pcapFile = GetPcapFile(message);
+        var pcapFile = GetPcapFile(rawDataId);
 
         // Process the pcap file using CicFlowMeter
         byte[] processedPcapFile = ProcessPcapFile(pcapFile);
@@ -61,6 +61,12 @@ public class RawDataConsumer : EventingBasicConsumer
         }
     }
 
+    /**
+    <summary>
+    Save the processed pcap file to the database.
+    Returns true if the record was saved successfully.
+    </summary>
+    */
     private Task<bool> SaveProcessedPcapFile(byte[] processedPcapFile, long rawDataId)
     {
         long newId;
@@ -76,6 +82,12 @@ public class RawDataConsumer : EventingBasicConsumer
         return Task.FromResult(true);
     }
 
+    /**
+    <summary>
+    Process the pcap file using CicFlowMeter.
+    Returns the csv file as a byte array.
+    </summary>
+    */
     private byte[] ProcessPcapFile(byte[] pcapFile)
     {
         //Create a temp file to store the pcap file data
@@ -84,7 +96,8 @@ public class RawDataConsumer : EventingBasicConsumer
         tempFile = Path.ChangeExtension(tempFile, ".pcap");
         //Write the pcap file data to the temp file
         File.WriteAllBytes(tempFile, pcapFile);
-        //Run the cfm bat file. The process should run in the .bat directory context
+        //Run the cfm bat file.
+        //The process should run in the .bat file dir to have access to the required libs
         var process = Process.Start(new ProcessStartInfo
         {
             FileName = "cmd.exe",
@@ -92,7 +105,6 @@ public class RawDataConsumer : EventingBasicConsumer
             WorkingDirectory = Path.GetDirectoryName(cfmPath) ?? throw new NullReferenceException("Could not get working directory from cfmPath")
         }) ?? throw new NullReferenceException("Could not start process. Check cfmPath and outputDirectory");
 
-        //var process = Process.Start(cfmPath,tempFile+ " " + outputDirectory);
         //Wait for the process to exit
         process.WaitForExit();
         //Get the csv file from the output directory
@@ -107,9 +119,13 @@ public class RawDataConsumer : EventingBasicConsumer
         return csvFileData ?? throw new NullReferenceException("csvFileData is null");
     }
 
-    private byte[] GetPcapFile(string message)
+    /**
+    <summary>
+    Get the pcap file from the database.
+    </summary>
+    */
+    private byte[] GetPcapFile(long id)
     {
-        long id = long.TryParse(message, out id) ? id : 0;
         var record =  databaseAccessor.GetRawDataWithId(id) ?? throw new NullReferenceException("Could not find record with id " + id);
         return record.Data;
     }
