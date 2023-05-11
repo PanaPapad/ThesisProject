@@ -12,6 +12,11 @@ public class QueueMessagerService : IDisposable
     private readonly IModel _channel;
     private readonly Dictionary<string, string> _queueNames;
 
+    /**
+    <summary>
+        Create a QueueMessagerService using a RabbitMQsettings instance
+    </summary>
+    */
     public QueueMessagerService(RabbitMQSettings _rabbitMqSettings)
     {
         var connection = _rabbitMqSettings.GetConnectionFactory();

@@ -31,6 +31,11 @@ public static class HelperFunctions
         var connectionString = $"Server={DbServer};Database={DbName};uid={DbUsername};Password={DbPassword};";
         return new DatabaseAccessor(connectionString);
     }
+    /**
+    <summary>
+        This method returns an IConfigurationRoot object read from a JSON file.
+    </summary>
+    */
     public static IConfigurationRoot GetConfigFromJsonFile(string path){
         return new ConfigurationBuilder()
         .AddJsonFile(path, optional: false, reloadOnChange: true)

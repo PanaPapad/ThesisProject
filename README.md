@@ -11,7 +11,7 @@ The project is composed of 5 main components:
 - CiCFlowMeter, a tool that extracts features from the network traffic. This tool was developed by the following team of researchers:
     Arash Habibi Lashkari: Researcher and Developer (Founder)
     Gerard Drapper: Researcher and Developer (Co-funder)
-    muhammad saiful islam: Researcher and Developer (Co-funder)
+    Muhammad Saiful Islam: Researcher and Developer (Co-funder)
     for more information about the tool, please visit: https://github.com/ahlashkari/CICFlowMeter
 - A data processing module.
 - An IDS that uses ML algorithms to detect anomalies in the network traffic.
@@ -72,25 +72,29 @@ Results from the IDS are assosciated with the processed data that they were extr
 The script used to create the database is provided in the repository.
 
 # Requirements
-    # Data collection script
+- This project has the following requirements:
+
+    # Data collection script:
     - Windows 10 or later.
     - Powershell 5.1 or later.
     - Wireshark.
+    - Administrator privileges.
+    - Permission to run scripts on the machine.
+    - Permission to capture network traffic on the machine. <-- This has legal implications.
 
-    # CiCFlowMeter
+    # CiCFlowMeter:
     - Java 8 or later.
 
-    # Data processing module
+    # Data processing module:
     - .NET Core Runtime 3.1 or later.
     - Erlang 25.3
     - RabbitMQ Server 3.11.13.
 
-    # IDS
+    # IDS:
     - Python 3.7 or later.
 
-    # Web application
-    - PHP
+    # Web application:
     - Web server (Apache, Nginx, etc.)
 
-    # Database
+    # Database:
     - MariaDB 10.4 or later.
