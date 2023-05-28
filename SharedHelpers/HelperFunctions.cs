@@ -1,5 +1,6 @@
 using IDSDatabaseTools;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace SharedHelpers;
 /**
@@ -36,9 +37,35 @@ public static class HelperFunctions
         This method returns an IConfigurationRoot object read from a JSON file.
     </summary>
     */
-    public static IConfigurationRoot GetConfigFromJsonFile(string path){
+    public static IConfigurationRoot GetConfigFromJsonFile(string path)
+    {
         return new ConfigurationBuilder()
         .AddJsonFile(path, optional: false, reloadOnChange: true)
         .Build();
+    }
+    public static JObject GetJsonFromConfiguration(IConfiguration config)
+    {
+        var jObject = new JObject();
+
+        foreach (var child in config.GetChildren())
+        {
+            if (child.Value == null)
+            {
+                // This is a sub-section, add it as a nested JObject
+                jObject[child.Key] = GetJsonFromConfiguration(child);
+            }
+            else
+            {
+                // This is a value, add it directly
+                jObject[child.Key] = new JValue(child.Value);
+            }
+        }
+
+        return jObject;
+    }
+    public static JArray JsonObjectsToJArray(JObject jObject)
+    {
+        JArray jArray = new JArray(jObject.Properties().OrderBy(p => p.Name).Select(p => p.Value));
+        return jArray;
     }
 }
