@@ -156,20 +156,42 @@ public class Program
         var qms = new QueueMessagerService(rmq);
         Console.WriteLine("QueueMessagerService created.");
         //Raw Data consumer
-        Console.WriteLine("Creating RawDataConsumer...");
-        var consumerConfig = new ConfigurationBuilder().AddConfiguration(config).Build();
-        consumerConfig["nextQueueId"] = config["QueueMappings:ProcessedDataQueueId"];
-        consumerConfig["failedQueueId"] = config["QueueMappings:ProcessedDataQueueFailedId"];
-        consumerConfig["cfmPath"] = config["CiCFlowmeterSettings:FullPath"];
-        consumerConfig["outputDirectory"] = config["CiCFlowmeterSettings:OutputFullPath"];
-        var rawConsumer = new RawDataConsumer(channel, dbAccessor, qms, consumerConfig);
-        //begin consuming from raw data queue
-        channel.BasicConsume(
-            queue: config["QueueMappings:RawDataQueueId"],
-            autoAck: false,
-            consumer: rawConsumer
-        );
-        Console.WriteLine("RawDataConsumer created.");
+        Console.WriteLine("Creating Raw Data Consumers...");
+        //Get consumer list from config as json string
+        var consumerListObject = GetJsonFromConfiguration(config.GetSection("ProcessingConsumers"));
+        var consumerList = JsonObjectsToJArray(consumerListObject);
+        //Convert json string to list of consumers
+        var consumers = JsonConvert.DeserializeObject<List<ConsumerSettings>>(consumerList.ToString());
+        foreach (var consumer in consumers ?? throw new NullReferenceException("Consumer list is null."))
+        {
+            //Create consumer
+            var rawDataConsumer = new RawDataConsumer(channel, dbAccessor, qms, consumer);
+            //Start consuming
+            channel.BasicConsume(
+                queue: consumer.InputQueueId,
+                autoAck: false,
+                consumer: rawDataConsumer
+            );
+        }
+        Console.WriteLine("Raw Data Consumers created.");
+        Console.WriteLine("Creating Processed Data Consumers...");
+        //Get consumer list from config as json string
+        consumerListObject = GetJsonFromConfiguration(config.GetSection("ThreatDetectionConsumers"));
+        consumerList = JsonObjectsToJArray(consumerListObject);
+        //Convert json string to list of consumers
+        consumers = JsonConvert.DeserializeObject<List<ConsumerSettings>>(consumerList.ToString());
+        foreach (var consumer in consumers ?? throw new NullReferenceException("Consumer list is null."))
+        {
+            //Create consumer
+            var processedDataConsumer = new RawDataConsumer(channel, dbAccessor, qms, consumer);
+            //Start consuming
+            channel.BasicConsume(
+                queue: consumer.InputQueueId,
+                autoAck: false,
+                consumer: processedDataConsumer
+            );
+        }
+        Console.WriteLine("Processed Data Consumers created.");
     }
 
     private static DatabaseAccessor ConnectDB(IConfigurationSection dbSettings){

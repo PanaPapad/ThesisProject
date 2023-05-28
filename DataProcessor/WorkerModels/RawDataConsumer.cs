@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using DataModels;
 using IDSDatabaseTools;
@@ -12,18 +13,12 @@ public class RawDataConsumer : EventingBasicConsumer
 {
     private readonly DatabaseAccessor databaseAccessor;
     private readonly QueueMessagerService queueMessagerService;
-    private readonly string cfmPath;
-    private readonly string  outputDirectory;
-    private readonly string nextQueueId;
-    private readonly string failedQueueId;
-    public RawDataConsumer(IModel channel, DatabaseAccessor accessor, QueueMessagerService qms, IConfiguration settings) : base(channel)
+    private readonly ConsumerSettings settings;
+    public RawDataConsumer(IModel channel, DatabaseAccessor accessor, QueueMessagerService qms, ConsumerSettings settings) : base(channel)
     {
         this.databaseAccessor = accessor;
         this.queueMessagerService = qms;
-        this.cfmPath = settings["cfmPath"] ?? throw new ArgumentNullException("CicFlowMeterPath is null");
-        this.outputDirectory = settings["outputDirectory"] ?? throw new ArgumentNullException("CicFlowMeterOutputDirectory is null");
-        this.nextQueueId = settings["nextQueueId"] ?? throw new ArgumentNullException("NextQueueId is null");
-        this.failedQueueId = settings["failedQueueId"] ?? throw new ArgumentNullException("FailedQueueId is null");
+        this.settings = settings;
         this.Received += async (model, ea) =>
                 {
                     var body = ea.Body.ToArray();
@@ -44,20 +39,22 @@ public class RawDataConsumer : EventingBasicConsumer
         // Get the pcap file from the database using the id in the message
         var pcapFile = GetPcapFile(rawDataId);
 
-        // Process the pcap file using CicFlowMeter
+        // Process the pcap file using the processing script/program
         byte[] processedPcapFile = ProcessPcapFile(pcapFile);
         //if the processed pcap file is null then send the message to the failed queue
-        if(processedPcapFile == null){
+        if (processedPcapFile == null)
+        {
             //Write the pcap file to the failed queue
-            queueMessagerService.SendMessage("Failed to process RawData with id: " + message, failedQueueId);
+            queueMessagerService.SendMessage("Failed to process RawData with id: " + message, settings.FailedQueueId);
             throw new NullReferenceException("Processed pcap file is null");
         }
 
         // Save the processed csv file to the db and send a message to the next queue
         var savedRecord = await SaveProcessedPcapFile(processedPcapFile, rawDataId);
-        if(!savedRecord){
+        if (!savedRecord)
+        {
             //Write the pcap file to the failed queue
-            queueMessagerService.SendMessage(processedPcapFile.ToString() ?? "No data found from processed RawData with id: "+message, failedQueueId);
+            queueMessagerService.SendMessage(processedPcapFile.ToString() ?? "No data found from processed RawData with id: " + message, settings.FailedQueueId);
         }
     }
 
@@ -70,15 +67,17 @@ public class RawDataConsumer : EventingBasicConsumer
     private Task<bool> SaveProcessedPcapFile(byte[] processedPcapFile, long rawDataId)
     {
         long newId;
-        try{
+        try
+        {
             newId = databaseAccessor.AddProcessedData(new ProcessedData(processedPcapFile, rawDataId));
         }
-        catch(Exception e){
+        catch (Exception e)
+        {
             Console.WriteLine("Error saving processed pcap file to database: " + e.Message);
             return Task.FromResult(false);
         }
         //Send a message to the next queue
-        queueMessagerService.SendMessage(newId.ToString(), nextQueueId);
+        queueMessagerService.SendMessage(newId.ToString(), settings.OutputQueueId);
         return Task.FromResult(true);
     }
 
@@ -98,17 +97,30 @@ public class RawDataConsumer : EventingBasicConsumer
         File.WriteAllBytes(tempFile, pcapFile);
         //Run the cfm bat file.
         //The process should run in the .bat file dir to have access to the required libs
-        var process = Process.Start(new ProcessStartInfo
+        var execSettings = settings.Settings;
+        Process process;
+        if (execSettings.BaseCommand.Equals("EXEC"))
         {
-            FileName = "cmd.exe",
-            Arguments = $"/c {cfmPath} {tempFile} {outputDirectory}",
-            WorkingDirectory = Path.GetDirectoryName(cfmPath) ?? throw new NullReferenceException("Could not get working directory from cfmPath")
-        }) ?? throw new NullReferenceException("Could not start process. Check cfmPath and outputDirectory");
-
+            process = Process.Start(new ProcessStartInfo
+            {
+                FileName = execSettings.ExecutablePath,
+                Arguments = $"{tempFile} {execSettings.OutputPath} " + execSettings.ExecutableArguments,
+                WorkingDirectory = Path.GetDirectoryName(execSettings.ExecutablePath) ?? throw new NullReferenceException("Could not get working directory from processorPath")
+            }) ?? throw new NullReferenceException("Could not start process. Check processorPath and outputDirectory");
+        }
+        else
+        {
+            process = Process.Start(new ProcessStartInfo
+            {
+                FileName = execSettings.BaseCommand,
+                Arguments = $"/c {execSettings.ExecutablePath} {tempFile} {execSettings.OutputPath} " + execSettings.ExecutableArguments,
+                WorkingDirectory = Path.GetDirectoryName(execSettings.ExecutablePath) ?? throw new NullReferenceException("Could not get working directory from processorPath")
+            }) ?? throw new NullReferenceException("Could not start process. Check processorPath and outputDirectory");
+        }
         //Wait for the process to exit
         process.WaitForExit();
         //Get the csv file from the output directory
-        var csvFile = Directory.GetFiles(outputDirectory).FirstOrDefault() ?? throw new NullReferenceException("Could not find csv file in output directory");
+        var csvFile = Directory.GetFiles(execSettings.OutputPath).FirstOrDefault() ?? throw new NullReferenceException("Could not find csv file in output directory");
         //Read the csv file into a byte array
         var csvFileData = File.ReadAllBytes(csvFile);
         //Delete the temp file
@@ -126,7 +138,7 @@ public class RawDataConsumer : EventingBasicConsumer
     */
     private byte[] GetPcapFile(long id)
     {
-        var record =  databaseAccessor.GetRawDataWithId(id) ?? throw new NullReferenceException("Could not find record with id " + id);
+        var record = databaseAccessor.GetRawDataWithId(id) ?? throw new NullReferenceException("Could not find record with id " + id);
         return record.Data;
     }
 
