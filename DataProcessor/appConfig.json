@@ -13,17 +13,35 @@
         "RabbitMQDefinitionsFilePath": "QueueModels/queueDefinitions.json"
     },
     "ConsumerSettings": {
-        "QueueMappings": {
-            "RawDataQueueId": "rawDataQueue",
-            "RawDataQueueFailedId": "failedRawDataQueue",
-            "ProcessedDataQueueId": "processedDataQueue",
-            "ProcessedDataQueueFailedId": "failedProcessedDataQueue",
-            "ResultsDataQueueId": "resultsDataQueue",
-            "ResultsDataQueueFailedId": "failedResultsDataQueue"
-        },
-        "CiCFlowmeterSettings": {
-            "FullPath": "C:/Users/Panagiotis/Documents/Code/ThesisProject/CiCFlowmeter_Compiled/bin/cfm.bat",
-            "OutputFullPath": "C:/Users/Panagiotis/Documents/Code/ThesisProject/CiCFlowmeter_Compiled/bin/outputData/"
-        }
+        "ProcessingConsumers": [
+            {
+                "ConsumerAmount": 1,
+                "ConsumerName": "ProcessingConsumer-CiCFlowMeter",
+                "InputQueueId": "rawDataQueue",
+                "OutputQueueId": "processedDataQueue",
+                "FailedQueueId": "failedRawDataQueue",
+                "Settings": {
+                    "BaseCommand":"EXEC",
+                    "ExecutablePath": "C:/Users/Panagiotis/Documents/Code/ThesisProject/CiCFlowmeter_Compiled/bin/cfm.bat",
+                    "ExecutableArguments": "",
+                    "OutputPath": "C:/Users/Panagiotis/Documents/Code/ThesisProject/CiCFlowmeter_Compiled/bin/outputData/"
+                }
+            }
+        ],
+        "ThreatDetectionConsumers": [
+            {
+                "ConsumerAmount": 1,
+                "ConsumerName": "ThreatDetectionConsumer-DemoModel",
+                "InputQueueId": "processedDataQueue",
+                "OutputQueueId": "resultsDataQueue",
+                "FailedQueueId": "failedProcessedDataQueue",
+                "Settings": {
+                    "BaseCommand":"",
+                    "ExecutablePath": "",
+                    "ExecutableArguments": "",
+                    "OutputPath": ""
+                }
+            }
+        ]
     }
 }
