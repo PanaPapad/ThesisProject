@@ -13,3 +13,6 @@ CiCFlowmeter_Compiled/bin/outputData/*
 CiCFlowmeter_Compiled/logs/*
 DataProcessor/logs/*
 IDS_python/*
+TestModel/*
+trained_model.pkl
+results.txt

@@ -36,10 +36,10 @@
                 "OutputQueueId": "resultsDataQueue",
                 "FailedQueueId": "failedProcessedDataQueue",
                 "Settings": {
-                    "BaseCommand":"",
-                    "ExecutablePath": "",
+                    "BaseCommand":"python",
+                    "ExecutablePath": "C:/Users/Panagiotis/Documents/Code/ThesisProject/TestModel/testIDS.py",
                     "ExecutableArguments": "",
-                    "OutputPath": ""
+                    "OutputPath": "C:/Users/Panagiotis/Documents/Code/ThesisProject/TestModel/output.csv"
                 }
             }
         ]
